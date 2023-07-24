@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Task Manager</title>
+</head>
+<body>
+  <h1>Task Manager</h1>
+  <input type="text" id="taskInput" placeholder="Enter a new task...">
+  <button onclick="addTask()">Add Task</button>
+
+  <ul id="taskList">
+    <!-- Tasks will be displayed here -->
+  </ul>
+
+  <script>
+    // Function to add a new task
+    function addTask() {
+      const taskInput = document.getElementById('taskInput');
+      const taskText = taskInput.value.trim();
+      if (taskText !== '') {
+        const taskList = document.getElementById('taskList');
+        const li = document.createElement('li');
+        li.textContent = taskText;
+        li.addEventListener('click', removeTask);
+        taskList.appendChild(li);
+        saveTasksToLocalStorage();
+        taskInput.value = '';
+      }
+    }
+
+    // Function to remove a task when clicked
+    function removeTask(event) {
+      const taskList = document.getElementById('taskList');
+      taskList.removeChild(event.target);
+      saveTasksToLocalStorage();
+    }
+
+    // Function to load tasks from local storage
+    function loadTasksFromLocalStorage() {
+      const savedTasks = localStorage.getItem('tasks');
+      if (savedTasks) {
+        const taskList = document.getElementById('taskList');
+        const tasks = JSON.parse(savedTasks);
+        tasks.forEach(taskText => {
+          const li = document.createElement('li');
+          li.textContent = taskText;
+          li.addEventListener('click', removeTask);
+          taskList.appendChild(li);
+        });
+      }
+    }
+
+    // Function to save tasks to local storage
+    function saveTasksToLocalStorage() {
+      const taskList = document.getElementById('taskList');
+      const tasks = [];
+      for (let i = 0; i < taskList.children.length; i++) {
+        tasks.push(taskList.children[i].textContent);
+      }
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    // Load tasks from local storage on page load
+    loadTasksFromLocalStorage();
+  </script>
+</body>
+</html>
